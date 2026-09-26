@@ -157,24 +157,6 @@ require("lazy").setup({
     vim.opt.clipboard:append({"unnamed", "unnamedplus"})
     vim.opt.undofile = true
 
-    -- Formatta il file con Black via `:Format`
-    _G.format_with_black = function(mode)
-        if vim.fn.executable("black") == 0 then
-            vim.notify("black non trovato: pip install black", vim.log.levels.WARN)
-            return
-        end
-        local buf = vim.api.nvim_get_current_buf()
-        local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-        local out = vim.fn.system("black -q -", table.concat(lines, "\n") .. "\n")
-        if vim.v.shell_error ~= 0 then
-            vim.notify("black: " .. out, vim.log.levels.ERROR)
-            return
-        end
-        vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(out, "\n", { plain = true, trimempty = true }))
-    end
-
-    vim.api.nvim_create_user_command("Format", _G.format_with_black, { desc = "Formatta il buffer con Black" })
-
     -- Centra il cursore quando apri un file
     vim.api.nvim_create_autocmd("BufReadPost", {
         pattern = "*",
